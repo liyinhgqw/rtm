@@ -24,6 +24,7 @@ public:
     request = dynamic_cast<GetRequest*>(request_);
     response = dynamic_cast<GetResponse*>(response_);
     std::string key = request->key();
+    Log_Info("RUN: %s", key.c_str());
     std::string value = "hello " + key + " !";
     response->set_value(value);
   }

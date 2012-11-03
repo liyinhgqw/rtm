@@ -7,6 +7,7 @@ using namespace google::protobuf;
 using namespace rtm::rpc;
 
 int main() {
+  InitializeNetworking();
   PClient client(EndpointHelper::rtm("127.0.0.1:55000"), rtm::util::StringPiece("rtm"));
 
   GetRequest request;

@@ -13,7 +13,7 @@ using std::string;
 
 namespace rtm {
 namespace util {
-LogLevel currentLogLevel = kLogInfo;
+LogLevel currentLogLevel = kLogDebug;
 static const char* logLevels[5] = { "D", "I", "W", "E", "F" };
 
 double get_processor_frequency() {

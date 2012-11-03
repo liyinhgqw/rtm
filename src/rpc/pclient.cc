@@ -18,6 +18,7 @@ bool PClient::call(util::StringPiece method, Message &request, Message &response
 Future* PClient::invoke(util::StringPiece method, util::StringPiece args) {
   Future *f = new RawFuture();
   send(f, method, args);
+  Log_Debug("Request: %s", dynamic_cast<RawFuture*>(f)->to_str().c_str());
   return f;
 }
 

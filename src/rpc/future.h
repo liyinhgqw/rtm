@@ -10,6 +10,7 @@
 #include "util/common.h"
 #include "util/logging.h"
 #include "util/marshal.h"
+#include "exceptions.h"
 
 namespace rtm {
 namespace rpc {
@@ -54,11 +55,13 @@ class RawFuture: public Future {
 public:
   RawFuture() { data = ""; }
   void read(util::StringPiece ret) {
-    data = "";
+    Log_Debug("RawFuture read ... ");
     Decoder d(ret);
     this->readHeader(&d);
     if (status == kCallSuccess) {
       d.read(&data);
+    } else {
+      throw new rpc_exception;
     }
   }
   std::string to_str() {

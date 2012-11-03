@@ -6,6 +6,8 @@ namespace rpc {
 
 void Client::connect() {
   connection_ = Connection::create(endpoint_);
+  Log_Debug("client connection setup !");
+  Log_Assert(connection_ != NULL, "connect null");
 }
 
 Client::Client() :
@@ -16,7 +18,7 @@ Future* Client::send(Future* result, util::StringPiece method, util::StringPiece
   if (connection_ == NULL) {
     connect();
   }
-  Log_Debug("Sending request for method %s", method.str().c_str());
+  Log_Info("Sending request for method %s", method.str().c_str());
   connection_->send(result, method, args);
   return result;
 }

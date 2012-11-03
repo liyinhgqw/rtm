@@ -3,9 +3,11 @@
 
 #include <google/protobuf/message.h>
 #include "util/common.h"
+#include "util/logging.h"
 #include "util/string.h"
 #include "rpc/client.h"
 #include "rpc/future.h"
+
 
 namespace rtm {
 namespace rpc {

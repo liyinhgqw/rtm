@@ -99,6 +99,7 @@ TCPConnection::TCPConnection(const string& host, int port) {
   host_ = host;
   port_ = port;
   socket_->setReadHandler(boost::bind(&TCPConnection::readFinished, this, _1));
+  Log_Debug("Set up socket.");
   socket_->connect();
 }
 
@@ -161,8 +162,11 @@ void TCPConnection::wait(Future* f) {
     msg = i->second;
     received_.erase(i);
   }
-
+  Log_Debug("Read Message ... len = %d", msg->header.len);
+  util::StringPiece str(msg->payload, msg->header.len);
+  Log_Debug("ret string = %s", str.str().c_str());
   f->read(util::StringPiece(msg->payload, msg->header.len));
+  Log_Debug("Read done .");
   RPCMessage::free(msg);
 }
 

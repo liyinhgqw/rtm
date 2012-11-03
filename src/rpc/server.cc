@@ -45,10 +45,13 @@ void Server::doDispatch(Socket* client, RPCMessage* req) {
       util::StringPiece(req->payload, req->header.len));
   RPCMessage *result = RPCMessage::alloc(rBytes.size());
   memcpy(result->payload, rBytes.data(), rBytes.size());
+  Log_Debug("Response ... %s", rBytes.c_str());
 
   Log_Debug("Dispatch done, responding...");
   strcpy(result->header.method, req->header.method);
   result->header.id = req->header.id;
+  result->header.len = rBytes.size();
+  Log_Debug("Payload len = %d", result->header.len);
   client->write(result);
   Log_Debug("Sent response...");
   incrPerfCounter();
