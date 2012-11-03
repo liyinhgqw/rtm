@@ -1,0 +1,23 @@
+package rtm.rpc;
+
+message KV {
+  required string key = 1;
+  required string value = 2;
+}
+
+message GetRequest {
+  required string key = 1;
+}
+
+message GetResponse {
+  required string value = 1;
+}
+
+message PutRequest {
+  required string key = 1;
+  required string value = 2;
+}
+
+message PutResponse {
+  required bool ret = 1;
+}

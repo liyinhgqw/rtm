@@ -49,6 +49,30 @@ public:
   void readHeader(Decoder* d);
 };
 
+// Used for protobuf
+class RawFuture: public Future {
+public:
+  RawFuture() { data = ""; }
+  void read(util::StringPiece ret) {
+    data = "";
+    Decoder d(ret);
+    this->readHeader(&d);
+    if (status == kCallSuccess) {
+      d.read(&data);
+    }
+  }
+  std::string to_str() {
+    return data;
+  }
+  std::string results() {
+    wait();
+    return data;
+  }
+
+private:
+  std::string data;
+};
+
 template<class T>
 class AbstractFuture: public Future {
 public:

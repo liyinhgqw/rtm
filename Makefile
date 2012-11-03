@@ -9,14 +9,14 @@ O := build
 CXX := g++
 
 # TODO: add my own build libs
-LIBS := $O/libutil.a $O/librpc.a
+LIBS := $O/libutil.a $O/librpc.a $O/libexamples.a
 
 LDFLAGS := \
   -L$O\
   -Wl,--start-group\
   ${LIBS} \
   -Wl,--end-group\
-  -lrt -lprotobuf -lpthread
+  -lrt -lprotobuf -lpthread -lboost_thread
   # TODO: add extenal libs
   
   
@@ -27,7 +27,7 @@ CXXFLAGS := -Wall -Wextra -Wno-unused-parameter -O0 -g2 -std=c++0x -fPIC -fno-om
 VPATH = ${SRCDIR}
 
 # TODO: mod target
-all: $O/examples/example	## generate example using tools
+all: $O/examples/kvserver $O/examples/kvclient	## generate example using tools
 
 %/.dir_timestamp:
 	mkdir -p $(dir $@)
@@ -51,8 +51,16 @@ OBJS_RAW := $(patsubst %.cc,%.o,${SRCS})
 OBJS := $(subst src,build,${OBJS_RAW})
 $O/librpc.a : ${OBJS}
 	ar rcs -o $@ $^
+	
+SRCS := $(wildcard src/examples/*.cc)
+OBJS_RAW := $(patsubst %.cc,%.o,${SRCS})
+OBJS := $(subst src,build,${OBJS_RAW})
+$O/libexamples.a : ${OBJS}
+	ar rcs -o $@ $^
 
 # TODO: mod target
-$O/examples/example : $O/examples/example.o ${LIBS}
+$O/examples/kvserver : $O/examples/kvserver.o ${LIBS}
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} -o $@ $(filter %.o,$^) ${LDFLAGS}
+$O/examples/kvclient : $O/examples/kvclient.o ${LIBS}
 	${CXX} ${CPPFLAGS} ${CXXFLAGS} -o $@ $(filter %.o,$^) ${LDFLAGS}
 	
