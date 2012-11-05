@@ -129,7 +129,7 @@ void TCPConnection::send(Future* result, const util::StringPiece& method,
   bzero(msg->header.method, kMethodNameSize);
   strcpy(msg->header.method, method.str().c_str());
   msg->header.time = time::TrueTime::GET()->d_now();
-
+  Log_Debug("client time: %f", msg->header.time); //
   memcpy(msg->payload, args.data(), args.size());
 
   Log_Assert(msg->header.len > 0, "This shouldn't happen.");

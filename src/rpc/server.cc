@@ -1,5 +1,6 @@
 #include "rpc/server.h"
 #include "util/logging.h"
+#include "util/string.h"s
 
 #include <utility>
 #include <boost/thread.hpp>
@@ -58,6 +59,10 @@ void Server::doDispatch(Socket* client, RPCMessage* req) {
 }
 
 void Server::pushDispatch(Socket* client, RPCMessage* req) {
+
+  Log_Debug("Server time: %f", req->header.time);
+  util::StringPiece sp(req->payload, req->header.len);
+  Log_Debug("Server got msg: %s", sp.AsString().c_str());
 //  Log_Assert(repeat_.find(make_pair(client, req->header.id)) == repeat_.end(), "Tried to add the same request twice.");
 //  repeat_.insert(make_pair(client, req->header.id));
 //  dispatchPool_.runAsync(boost::bind(&Server::doDispatch, this, client, req));

@@ -9,7 +9,6 @@ namespace time {
 
 class TrueTime: public Serializable {
 
-
 public:
   static const double err;     // err confidence interval
 
@@ -37,8 +36,7 @@ private:
   double offset;  // different time duration compared to the global clock
 };
 
-//const double TrueTime::err = 0.01;
-
+void InitializeTrueTime();
 
 }
 }

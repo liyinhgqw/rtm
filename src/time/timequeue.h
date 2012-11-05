@@ -43,6 +43,7 @@ public:
   void runAsync(Job job, double time);
   void push(TimedJob);
   void pop();
+  void drop_passed();
 };
 
 
