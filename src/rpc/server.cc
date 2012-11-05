@@ -60,7 +60,8 @@ void Server::doDispatch(Socket* client, RPCMessage* req) {
 void Server::pushDispatch(Socket* client, RPCMessage* req) {
 //  Log_Assert(repeat_.find(make_pair(client, req->header.id)) == repeat_.end(), "Tried to add the same request twice.");
 //  repeat_.insert(make_pair(client, req->header.id));
-  dispatchPool_.runAsync(boost::bind(&Server::doDispatch, this, client, req));
+//  dispatchPool_.runAsync(boost::bind(&Server::doDispatch, this, client, req));
+  dispatchQueue_.runAsync(boost::bind(&Server::doDispatch, this, client, req), req->header.time);
 }
 
 void Server::serve(int port) {

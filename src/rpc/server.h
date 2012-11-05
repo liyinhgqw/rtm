@@ -6,8 +6,9 @@
 
 #include "rpc/connection.h"
 #include "rpc/future.h"
-#include "util/threadpool.h"
+//#include "util/threadpool.h"
 #include "util/string.h"
+#include "time/timequeue.h"
 
 namespace rtm {
 namespace rpc {
@@ -20,7 +21,8 @@ class Server {
 private:
   ServerSocket* serverSocket_;
   std::vector<Socket*> clients_;
-  ThreadPool dispatchPool_;
+//  ThreadPool dispatchPool_;
+  time::TimeQueue dispatchQueue_;
 
   void doDispatch(Socket* client, RPCMessage* msg);
   void pushDispatch(Socket* client, RPCMessage* msg);
@@ -31,10 +33,6 @@ public:
   Server();
   void serve(int port);
 
-  // Automatically generated for each subclass.
-  //
-  // Should invoke the method 'method' with arguments args, returning the
-  // serialized result object.
   virtual std::string dispatch(util::StringPiece method, util::StringPiece args) = 0;
 };
 

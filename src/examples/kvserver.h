@@ -12,11 +12,9 @@ class Get: public MethodBase {
 public:
   virtual Message* new_request_msg() {
     return new GetRequest;
-    return 0;
   }
   virtual Message* new_response_msg() {
     return new GetResponse;
-    return 0;
   }
   virtual void run(Message* request_, Message* response_) {
     GetRequest *request;

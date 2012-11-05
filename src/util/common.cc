@@ -32,6 +32,10 @@ timespec timespecFromDouble(double t) {
   return tv;
 }
 
+double timespecToDouble(const timespec& tp) {
+  return tp.tv_sec + 1e-9 * tp.tv_nsec;
+}
+
 void Sleep(double time) {
   timespec req = timespecFromDouble(time);
   nanosleep(&req, NULL);

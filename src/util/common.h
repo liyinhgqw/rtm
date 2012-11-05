@@ -21,6 +21,7 @@ double Now();
 std::string Hostname();
 timeval timevalFromDouble(double t);
 timespec timespecFromDouble(double t);
+double timespecToDouble(const timespec&);
 
 void Sleep(double sleepTime);
 

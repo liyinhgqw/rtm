@@ -31,6 +31,7 @@ struct RPCHeader {
   uint64_t id;
   uint32_t len;
   char method[kMethodNameSize];
+  double time;
 };
 
 class RPCMessage {

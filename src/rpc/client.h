@@ -25,7 +25,6 @@ protected:
   Endpoint endpoint_;
   std::string serviceType_;
   Connection* connection_;
-
   void connect();
 public:
   Client();
