@@ -7,6 +7,6 @@ bin=`cd "$bin"; pwd`
 
 . "$bin/rtm-config.sh"
 
-"$bin"/rtm-daemon.sh --config $RTM_CONF_DIR stop rtmserver 
-"$bin"/rtm-daemons.sh --config $RTM_CONF_DIR stop timeserver 
+"$bin"/rtm-daemon.sh --config $RTM_CONF_DIR stop timeserver 
+"$bin"/rtm-daemons.sh --config $RTM_CONF_DIR stop rtmserver 
 

@@ -22,16 +22,16 @@ shift
 
 RUN=""
 if [ "$COMMAND" = "timeserver" ] ; then
-  RUN="${bin}/run_timeserver" 
+  RUN="${bin}/timeserver" 
 elif [ "$COMMAND" = "rtmserver" ] ; then
-  RUN="${bin}/run_rtmserver"
+  RUN="${bin}/rtmserver"
 else
   echo "Wrong command. Type rtm to see usage."
   exit 1
 fi
 
 if [ -x "$RUN" ] ; then
-  . "$RUN"
+  "$RUN"
   echo "Server started"
 else
   echo "Unexecutable server: $RUN."

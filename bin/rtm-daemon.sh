@@ -107,6 +107,8 @@ case $startStop in
       else
         echo no $command to stop
       fi
+      # kill the run_forever_servers
+      killall $command > /dev/null 2>&1
     else
       echo no $command to stop
     fi
