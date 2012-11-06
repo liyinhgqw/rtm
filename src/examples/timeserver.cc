@@ -1,12 +1,12 @@
-#include "kvserver.h"
+#include "timeserver.h"
 
 using namespace rtm::rpc;
 using namespace rtm::time;
 
 int main() {
   InitializeNetworking();
-  InitializeTrueTime();
-  RPC_REG(get, Get);
+  TrueTime::GET();
   PServer server;
-  server.serve(55001);
+  // TODO: configure from file
+  server.serve(55000);
 }

@@ -12,7 +12,7 @@ using namespace rtm::time;
 int main() {
   InitializeNetworking();
   InitializeTrueTime();
-  PClient client(EndpointHelper::rtm("127.0.0.1:55000"), rtm::util::StringPiece("rtm"));
+  PClient client(EndpointHelper::rtm("127.0.0.1:55001"), rtm::util::StringPiece("rtm"));
 
   GetRequest request;
   GetResponse response;

@@ -62,7 +62,7 @@ public:
     Decoder d(ret);
     this->readHeader(&d);
     if (status == kCallSuccess) {
-      d.read(&data);
+      if (!d.done()) d.read(&data);   // should always check before read
     } else {
       throw new rpc_exception;
     }

@@ -26,12 +26,14 @@ TrueTime* TrueTime::GET() {
 
 void TrueTime::sync() {
   // TODO: modify it to be a conf read way
+  Log_Debug("Sync started ...");
   rpc::PClient time_client(rpc::EndpointHelper::rtm("127.0.0.1:55000"), rtm::util::StringPiece("rtm"));
   while (1) {
     double peertime, new_offset;
     time_client.call_truetime(peertime);
     new_offset = peertime - this->d_now();
     this->offset += new_offset;
+    Log_Debug("Sync Time: truetime = %f,  offset = %f", d_now(), offset);
 
     sleep(30);
   }

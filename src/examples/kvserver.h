@@ -2,7 +2,9 @@
 #define KVSERVER_H_
 
 #include <string>
+
 #include "rpc/pserver.h"
+#include "time/truetime.h"
 #include "kv.pb.h"
 
 namespace rtm {

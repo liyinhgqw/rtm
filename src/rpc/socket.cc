@@ -300,11 +300,11 @@ void Socket::handleRead() {
 }
 
 void Socket::processMessages() {
-  while (inBytes_.size() > sizeof(RPCHeader)) {
+  while (inBytes_.size() >= sizeof(RPCHeader)) {
     RPCHeader h;
     std::copy(inBytes_.begin(), inBytes_.begin() + sizeof(RPCHeader),
         reinterpret_cast<char*>(&h));
-    Log_Assert(h.len > 0, "Invalid message size.");
+    Log_Assert(h.len >= 0, "Invalid message size.");
 
     if (inBytes_.size() < h.len + sizeof(RPCHeader)) {
       break;
@@ -318,7 +318,7 @@ void Socket::processMessages() {
         reinterpret_cast<char*>(m->payload));
     inBytes_.erase(inBytes_.begin(), inBytes_.begin() + h.len);
 
-//    Log_Info("Read message...");
+    Log_Info("Read message... %s", m->header.method);
     readHandler_(m);
   }
 }
@@ -369,8 +369,6 @@ void Socket::handleWrite() {
 }
 
 void Socket::write(const RPCMessage *m) {
-  Log_Assert(m->header.len > 0, "Invalid message size.");
-
   {
     boost::mutex::scoped_lock lock(messageLock_);
     outgoing_.push_back(m);

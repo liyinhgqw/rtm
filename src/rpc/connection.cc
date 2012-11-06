@@ -125,14 +125,14 @@ void TCPConnection::send(Future* result, const util::StringPiece& method,
 
   msg->header.len = args.size();
   Log_Assert(method.size() < kMethodNameSize, "Too long a method name.");
-  Log_Assert(args.size() > 0, "Invalid payload?");
+//  Log_Assert(args.size() > 0, "Invalid payload?");
   bzero(msg->header.method, kMethodNameSize);
   strcpy(msg->header.method, method.str().c_str());
   msg->header.time = time::TrueTime::GET()->d_now();
   Log_Debug("client time: %f", msg->header.time); //
   memcpy(msg->payload, args.data(), args.size());
 
-  Log_Assert(msg->header.len > 0, "This shouldn't happen.");
+//  Log_Assert(msg->header.len > 0, "This shouldn't happen.");
   result->init(this, msg->header.id);
   socket_->write(msg);
 }

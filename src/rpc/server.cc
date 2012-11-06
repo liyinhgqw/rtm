@@ -74,6 +74,7 @@ void Server::pushDispatch(Socket* client, RPCMessage* req) {
 //  repeat_.insert(make_pair(client, req->header.id));
 //  dispatchPool_.runAsync(boost::bind(&Server::doDispatch, this, client, req));
   if (strcmp(req->header.method, "") == 0) {  // just ask for truetime, do not dispatch
+    Log_Debug("Service truetime sync...");
     ValueT<void> value;
     std::string rBytes;
     Encoder enc(&rBytes);

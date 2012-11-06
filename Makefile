@@ -27,7 +27,7 @@ CXXFLAGS := -Wall -Wextra -Wno-unused-parameter -O0 -g2 -std=c++0x -fPIC -fno-om
 VPATH = ${SRCDIR}
 
 # TODO: mod target
-all: $O/examples/kvserver $O/examples/kvclient	## generate example using tools
+all: $O/examples/kvserver $O/examples/kvclient $O/examples/timeserver  ## generate example using tools
 
 %/.dir_timestamp:
 	mkdir -p $(dir $@)
@@ -69,4 +69,6 @@ $O/examples/kvserver : $O/examples/kvserver.o ${LIBS}
 	${CXX} ${CPPFLAGS} ${CXXFLAGS} -o $@ $(filter %.o,$^) ${LDFLAGS}
 $O/examples/kvclient : $O/examples/kvclient.o ${LIBS}
 	${CXX} ${CPPFLAGS} ${CXXFLAGS} -o $@ $(filter %.o,$^) ${LDFLAGS}
+$O/examples/timeserver : $O/examples/timeserver.o ${LIBS}
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} -o $@ $(filter %.o,$^) ${LDFLAGS}	
 	
