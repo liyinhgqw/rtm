@@ -18,6 +18,7 @@ int main() {
   GetResponse response;
   request.set_key("mao");
 
+  // TODO: void-request, void-response
   client.call("get", request, response);
   std::cout << response.value() << std::endl;
 }

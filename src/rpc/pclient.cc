@@ -15,6 +15,14 @@ bool PClient::call(util::StringPiece method, Message &request, Message &response
   return true;
 }
 
+bool PClient::call_truetime(double& peertime) {
+  Future* f = invoke("", "");
+  if (!f) return false;
+  RawFuture *rf = dynamic_cast<RawFuture*>(f);
+  rf->results();    // wait for the result
+  peertime = rf->peertime;
+}
+
 Future* PClient::invoke(util::StringPiece method, util::StringPiece args) {
   Future *f = new RawFuture();
   send(f, method, args);

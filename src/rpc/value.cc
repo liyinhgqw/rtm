@@ -36,5 +36,11 @@ void Value::setError(const std::string& msg) {
   status = kCallError;
 }
 
+void Value::setOutdated(const std::string& msg) {
+  Log_Info("Returning outdated: %s", msg.c_str());
+  errorTrace_.push_back(RPCError(msg));
+  status = kCallOutdated;
+}
+
 } // namespace rpc
 } // namespace rtm

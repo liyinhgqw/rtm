@@ -27,11 +27,15 @@ void TimeQueue::push(TimedJob e) {
   pthread_mutex_lock(&qLock);
   Log_Debug("Prepare to pushing");
 
-  if (q_.empty() || e.second < q_.top().second
-          || !(time::TrueTime::GET()->after(e.second))) {
-    Log_Debug("Prepare to pushed: %f", time::TrueTime::GET()->d_now());
-    q_.push(e);
-    pthread_cond_signal(&newfirst_);
+  if (time::TrueTime::GET()->after(e.second)) { // outdated
+    (e.first)(true);
+  } else {
+    if (q_.empty() || e.second < q_.top().second) {
+      q_.push(e);
+      pthread_cond_signal(&newfirst_);
+    } else {
+      q_.push(e);
+    }
   }
   pthread_mutex_unlock(&qLock);
 }
@@ -55,7 +59,7 @@ void TimeQueue::pop() {
     }
     if (rc == ETIMEDOUT) { // fire
       Job job = timed_job.first;
-      job();
+      job(false);
       q_.pop();
       break;
     } else if (q_.top().second < oldfirst) { // newfirst preempts

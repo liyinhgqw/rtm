@@ -1,11 +1,19 @@
 #include "truetime.h"
 #include "util/logging.h"
+#include "rpc/pclient.h"
+#include "rpc/connection.h"
+#include "util/logging.h"
+
 
 namespace rtm {
 namespace time {
 
 void InitializeTrueTime() {
   TrueTime::GET();
+  boost::thread* sync_thread = new boost::thread(&TrueTime::sync, TrueTime::GET());
+  if (!sync_thread) {
+    Log_Fatal("Cannot initialize Truetime service.");
+  }
 }
 
 TrueTime* TrueTime::GET() {
@@ -14,6 +22,19 @@ TrueTime* TrueTime::GET() {
     r = new TrueTime();
   }
   return r;
+}
+
+void TrueTime::sync() {
+  // TODO: modify it to be a conf read way
+  rpc::PClient time_client(rpc::EndpointHelper::rtm("127.0.0.1:55000"), rtm::util::StringPiece("rtm"));
+  while (1) {
+    double peertime, new_offset;
+    time_client.call_truetime(peertime);
+    new_offset = peertime - this->d_now();
+    this->offset += new_offset;
+
+    sleep(30);
+  }
 }
 
 const double TrueTime::err = 0.01;
@@ -53,7 +74,7 @@ bool TrueTime::before(const timespec& t) const
 
 void TrueTime::write(Encoder *e) const {
   double dnow = d_now();
-  //e->write(dnow);
+  e->write(dnow);
 }
 
 void TrueTime::read(Decoder *d) {

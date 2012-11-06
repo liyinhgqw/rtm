@@ -24,8 +24,6 @@ std::string PServer::dispatch(util::StringPiece method, util::StringPiece args) 
     value.write(&enc);
   } catch (rpc_exception &e) {
     e.error();
-
-    value.status = kCallError;
     value.setError(std::string(e.what()));
     value.write(&enc);
   }

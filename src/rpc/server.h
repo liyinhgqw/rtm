@@ -24,7 +24,7 @@ private:
 //  ThreadPool dispatchPool_;
   time::TimeQueue dispatchQueue_;
 
-  void doDispatch(Socket* client, RPCMessage* msg);
+  void doDispatch(Socket* client, RPCMessage* msg, bool outdated);
   void pushDispatch(Socket* client, RPCMessage* msg);
 
 //  std::set<std::pair<Socket*, int64_t> > repeat_;

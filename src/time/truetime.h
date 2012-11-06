@@ -31,6 +31,8 @@ public:
   virtual void write(Encoder *e) const;
   virtual void read(Decoder *d);
 
+  void sync();
+
 
 private:
   double offset;  // different time duration compared to the global clock

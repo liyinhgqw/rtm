@@ -16,7 +16,7 @@ namespace rtm {
 namespace rpc {
 
 enum CallStatus {
-  kCallPending = 0, kCallSuccess = 1, kCallTimedOut = 2, kCallError = 3,
+  kCallPending = 0, kCallSuccess = 1, kCallTimedOut = 2, kCallError = 3, kCallOutdated = 4
 };
 
 class Connection;
@@ -26,12 +26,15 @@ protected:
   // The absolute time (on the local machine) by which this future must
   // be completed.
   double deadline_;
+
 public:
   Connection* connection;
   int64_t id;
 
   CallStatus status;
   std::vector<RPCError> errorTrace;
+
+  double peertime;
 
   Future();
   virtual ~Future();

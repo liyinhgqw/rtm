@@ -168,6 +168,7 @@ void TCPConnection::wait(Future* f) {
   Log_Debug("Read Message ... len = %d", msg->header.len);
   util::StringPiece str(msg->payload, msg->header.len);
   Log_Debug("ret string = %s", str.str().c_str());
+  f->peertime = msg->header.time;
   f->read(util::StringPiece(msg->payload, msg->header.len));
   Log_Debug("Read done .");
   RPCMessage::free(msg);

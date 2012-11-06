@@ -22,6 +22,7 @@ public:
 
   void propagateError(const Future& f);
   void setError(const std::string& msg);
+  void setOutdated(const std::string& msg);
 
   CallStatus status;
 protected:

@@ -31,7 +31,7 @@ public:
 
 class TimeQueue: private boost::noncopyable {
 private:
-  typedef boost::function<void()> Job;
+  typedef boost::function<void(bool)> Job;
   typedef pair<Job, double> TimedJob;
   priority_queue<TimedJob, vector<TimedJob>, TimeCmp<Job> > q_;
   pthread_cond_t newfirst_;

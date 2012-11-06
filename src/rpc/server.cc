@@ -1,6 +1,7 @@
 #include "rpc/server.h"
 #include "util/logging.h"
-#include "util/string.h"s
+#include "util/string.h"
+#include "value.h"
 
 #include <utility>
 #include <boost/thread.hpp>
@@ -40,21 +41,27 @@ static void incrPerfCounter() {
 
 }
 
-void Server::doDispatch(Socket* client, RPCMessage* req) {
+void Server::doDispatch(Socket* client, RPCMessage* req, bool outdated) {
   //Log_Info("Got request, dispatching... method=%s, args=%s", req->header.method, req->data.c_str());
-  std::string rBytes = dispatch(req->header.method,
-      util::StringPiece(req->payload, req->header.len));
+  std::string rBytes;
+
+  if (!outdated) {
+    // TODO: client handle outdated error
+    rBytes = dispatch(req->header.method,
+        util::StringPiece(req->payload, req->header.len));
+  } else {
+    Log_Debug("Request %d is outdated.", req->header.id);
+    ValueT<void> value;
+    Encoder enc(&rBytes);
+    value.setOutdated("RPC outdated.");
+    value.write(&enc);
+  }
   RPCMessage *result = RPCMessage::alloc(rBytes.size());
   memcpy(result->payload, rBytes.data(), rBytes.size());
-  Log_Debug("Response ... %s", rBytes.c_str());
-
-  Log_Debug("Dispatch done, responding...");
   strcpy(result->header.method, req->header.method);
   result->header.id = req->header.id;
-  result->header.len = rBytes.size();
-  Log_Debug("Payload len = %d", result->header.len);
+  result->header.time = time::TrueTime::GET()->d_now();
   client->write(result);
-  Log_Debug("Sent response...");
   incrPerfCounter();
 }
 
@@ -66,9 +73,21 @@ void Server::pushDispatch(Socket* client, RPCMessage* req) {
 //  Log_Assert(repeat_.find(make_pair(client, req->header.id)) == repeat_.end(), "Tried to add the same request twice.");
 //  repeat_.insert(make_pair(client, req->header.id));
 //  dispatchPool_.runAsync(boost::bind(&Server::doDispatch, this, client, req));
-  dispatchQueue_.runAsync(boost::bind(&Server::doDispatch, this, client, req), req->header.time);
+  if (strcmp(req->header.method, "") == 0) {  // just ask for truetime, do not dispatch
+    ValueT<void> value;
+    std::string rBytes;
+    Encoder enc(&rBytes);
+    value.write(&enc);
+    RPCMessage *result = RPCMessage::alloc(rBytes.size());
+    memcpy(result->payload, rBytes.data(), rBytes.size());
+    strcpy(result->header.method, req->header.method);
+    result->header.id = req->header.id;
+    result->header.time = time::TrueTime::GET()->d_now();
+    client->write(result);
+  } else {
+    dispatchQueue_.runAsync(boost::bind(&Server::doDispatch, this, client, req, _1), req->header.time);
+  }
 }
-
 void Server::serve(int port) {
   serverSocket_ = new ServerSocket(port);
   serverSocket_->listen();

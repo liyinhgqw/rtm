@@ -18,6 +18,7 @@ class PClient: public Client {
 public:
   PClient(const Endpoint& info, util::StringPiece service): Client(info, service) {}
   virtual bool call(util::StringPiece method, Message &request, Message &response);
+  virtual bool call_truetime(double&);
   virtual Future* invoke(util::StringPiece method, util::StringPiece args);
 };
 
