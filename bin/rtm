@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# The Rtm command script
+
+bin=`dirname "$0"`
+bin=`cd "$bin"; pwd`
+
+. "$bin"/rtm-config.sh
+
+# if no args specified, show usage
+if [ $# = 0 ]; then
+  echo "Usage: rtm [--config confdir] COMMAND"
+  echo "where COMMAND is one of:"
+  echo "  timeserver           run the TrueTime server node" 
+  echo "  rtmserver            run replicated server node" 
+  exit 1
+fi
+
+# get arguments
+COMMAND=$1
+shift
+
+RUN=""
+if [ "$COMMAND" = "timeserver" ] ; then
+  RUN="${bin}/run_timeserver" 
+elif [ "$COMMAND" = "rtmserver" ] ; then
+  RUN="${bin}/run_rtmserver"
+else
+  echo "Wrong command. Type rtm to see usage."
+  exit 1
+fi
+
+if [ -x "$RUN" ] ; then
+  . "$RUN"
+  echo "Server started"
+else
+  echo "Unexecutable server: $RUN."
+fi
