@@ -25,7 +25,6 @@ TrueTime* TrueTime::GET() {
 }
 
 void TrueTime::sync() {
-  // TODO: modify it to be a conf read way
   Log_Debug("Sync started ...");
   rpc::PClient time_client(rpc::EndpointHelper::rtm(util::Conf::get_timeserver_hostport()), rtm::util::StringPiece("rtm"));
   while (1) {

@@ -16,5 +16,4 @@ int main() {
   RPC_REG(get, Get);
   PServer server;
   server.serve(Conf::get_rtmserver_port());
- XmlParser xml_parser;
 }

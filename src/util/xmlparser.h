@@ -52,11 +52,6 @@ public:
   }
   std::string parse(const std::string element);
 
-  template <class T>
-  T read(typename boost::enable_if<boost::is_arithmetic<T> >::type* dummy = 0) {
-    printf("bingo\n");
-  }
-
 private:
   std::string file_;
 };
