@@ -25,6 +25,12 @@ if [ "$COMMAND" = "timeserver" ] ; then
   RUN="${bin}/timeserver" 
 elif [ "$COMMAND" = "rtmserver" ] ; then
   RUN="${bin}/rtmserver"
+elif [ "$COMMAND" = "client" ] ; then
+  if [ $# -le 1 ] ; then 
+    RUN="${bin}/client"
+  else
+    RUN="$@"
+  fi
 else
   echo "Wrong command. Type rtm to see usage."
   exit 1
