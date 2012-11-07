@@ -3,6 +3,7 @@
 
 #include "xmlparser.h"
 #include <string>
+#include <list>
 
 namespace rtm {
 namespace util {
@@ -14,6 +15,7 @@ public:
   static std::string get_timeserver_hostport();
   static int get_timeserver_port();
   static int get_rtmserver_port();
+  static std::list<std::string> get_rtmserver_hostport();
 };
 
 }

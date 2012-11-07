@@ -54,6 +54,19 @@ if [ "$RTM_HOME_WARN_SUPPRESS" = "" ] && [ "$RTM_HOME" != "" ]; then
   echo 1>&2
 fi
 
+## hack hostlist
+HOSTLIST=$RTM_SERVERS
+
+if [ "$HOSTLIST" = "" ]; then
+  if [ "$RTM_SERVERS" = "" ]; then
+    export HOSTLIST="${RTM_CONF_DIR}/servers"
+  else
+    export HOSTLIST="${RTM_SERVERS}"
+  fi
+fi
+##
+
 export RTM_HOME=${RTM_PREFIX}
 export RTM_HOME_WARN_SUPPRESS=1
+
 
