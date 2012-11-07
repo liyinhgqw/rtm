@@ -12,7 +12,7 @@ class TrueTime: public Serializable {
 public:
   static const double err;     // err confidence interval
 
-  TrueTime() { offset = 0.0; }
+  TrueTime() { offset_ = 0.0; }
   timespec now() const;
   double d_now() const;
 
@@ -35,7 +35,7 @@ public:
 
 
 private:
-  double offset;  // different time duration compared to the global clock
+  double offset_;  // different time duration compared to the global clock
 };
 
 void InitializeTrueTime();

@@ -35,7 +35,7 @@ private:
   typedef pair<Job, double> TimedJob;
   priority_queue<TimedJob, vector<TimedJob>, TimeCmp<Job> > q_;
   pthread_cond_t newfirst_;
-  pthread_mutex_t qLock;
+  pthread_mutex_t qLock_;
   boost::thread* workthread_;
   void runWorkerThread();
 public:

@@ -3,7 +3,7 @@
 #include "rpc/pclient.h"
 #include "rpc/connection.h"
 #include "util/logging.h"
-
+#include "util/configuration.h"
 
 namespace rtm {
 namespace time {
@@ -27,13 +27,13 @@ TrueTime* TrueTime::GET() {
 void TrueTime::sync() {
   // TODO: modify it to be a conf read way
   Log_Debug("Sync started ...");
-  rpc::PClient time_client(rpc::EndpointHelper::rtm("127.0.0.1:55000"), rtm::util::StringPiece("rtm"));
+  rpc::PClient time_client(rpc::EndpointHelper::rtm(util::Conf::get_timeserver_hostport()), rtm::util::StringPiece("rtm"));
   while (1) {
     double peertime, new_offset;
     time_client.call_truetime(peertime);
     new_offset = peertime - this->d_now();
-    this->offset += new_offset;
-    Log_Debug("Sync Time: truetime = %f,  offset = %f", d_now(), offset);
+    this->offset_ += new_offset;
+    Log_Debug("Sync Time: truetime = %f,  offset = %f", d_now(), offset_);
 
     sleep(30);
   }
@@ -49,7 +49,7 @@ timespec TrueTime::now() const
 double TrueTime::d_now() const
 {
   double local = util::Now();
-  double global = local + offset;
+  double global = local + offset_;
   return global;
 }
 
@@ -88,7 +88,7 @@ timespec TrueTime::fire_time(double cl_time) const {
 }
 
 timespec TrueTime::fire_localtime(double cl_time) const {
-  double d_localtime = deadline(cl_time) - offset;
+  double d_localtime = deadline(cl_time) - offset_;
   return util::timespecFromDouble(d_localtime);
 }
 

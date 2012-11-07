@@ -7,7 +7,7 @@ namespace time {
 
 class TimeQueue;
 TimeQueue::TimeQueue() {
-  assert(pthread_mutex_init(&qLock, NULL) == 0);
+  assert(pthread_mutex_init(&qLock_, NULL) == 0);
   assert(pthread_cond_init(&newfirst_, NULL) == 0);
   workthread_ = new boost::thread(&TimeQueue::runWorkerThread, this);
 }
@@ -24,7 +24,7 @@ void TimeQueue::runAsync(Job job, double time) {
 
 void TimeQueue::push(TimedJob e) {
   Log_Debug("Prepare to push");
-  pthread_mutex_lock(&qLock);
+  pthread_mutex_lock(&qLock_);
   Log_Debug("Prepare to pushing");
 
   if (time::TrueTime::GET()->after(e.second)) { // outdated
@@ -37,15 +37,15 @@ void TimeQueue::push(TimedJob e) {
       q_.push(e);
     }
   }
-  pthread_mutex_unlock(&qLock);
+  pthread_mutex_unlock(&qLock_);
 }
 
 void TimeQueue::pop() {
-  pthread_mutex_lock(&qLock);
+  pthread_mutex_lock(&qLock_);
   while (1) {
     Log_Debug("Waiting for the push ...");
     while (q_.size() == 0) {
-      pthread_cond_wait(&newfirst_, &qLock);
+      pthread_cond_wait(&newfirst_, &qLock_);
     }
 
     int rc = 0;
@@ -55,7 +55,7 @@ void TimeQueue::pop() {
     while (q_.top().second >= oldfirst && rc == 0) {
       Log_Debug("Waiting for the newfirst or timer ...");
       timespec timer = time::TrueTime::GET()->fire_localtime(timed_job.second);
-      rc = pthread_cond_timedwait(&newfirst_, &qLock, &timer);
+      rc = pthread_cond_timedwait(&newfirst_, &qLock_, &timer);
     }
     if (rc == ETIMEDOUT) { // fire
       Job job = timed_job.first;
@@ -69,7 +69,7 @@ void TimeQueue::pop() {
     }
   }
 
-  pthread_mutex_unlock(&qLock);
+  pthread_mutex_unlock(&qLock_);
 }
 
 // should not happen actually

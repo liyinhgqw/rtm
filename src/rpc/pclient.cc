@@ -23,6 +23,7 @@ bool PClient::call_truetime(double& peertime) {
   rf->results();    // wait for the result
   peertime = rf->peertime;
   Log_Debug("Call truetime done.");
+  return true;
 }
 
 Future* PClient::invoke(util::StringPiece method, util::StringPiece args) {

@@ -304,7 +304,6 @@ void Socket::processMessages() {
     RPCHeader h;
     std::copy(inBytes_.begin(), inBytes_.begin() + sizeof(RPCHeader),
         reinterpret_cast<char*>(&h));
-    Log_Assert(h.len >= 0, "Invalid message size.");
 
     if (inBytes_.size() < h.len + sizeof(RPCHeader)) {
       break;

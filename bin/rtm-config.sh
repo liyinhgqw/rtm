@@ -17,7 +17,6 @@ this="$config_bin/$script"
 
 # the root of the rtm installation
 export RTM_PREFIX=`dirname "$this"`/..
-
 #check to see if the conf dir is given as an optional argument
 if [ $# -gt 1 ]
 then

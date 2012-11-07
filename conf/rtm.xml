@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<timeserver>
+		<host>beaker-2</host>
+		<port>55000</port>
+	</timeserver>
+	
+	<rtmserver>
+		<port>55001</port>
+	</rtmserver>
+</configuration>
