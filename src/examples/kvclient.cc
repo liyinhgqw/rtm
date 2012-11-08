@@ -33,7 +33,7 @@ int main() {
     value = StringPrintf("%f", TrueTime::GET()->d_now());
     request.set_key(key);
     request.set_value(value);
-    Log_Debug("put key %d", i);
+    Log_Debug("put key=%s, value=%s", key.c_str(), value.c_str());
     cproxy->call("put", request, response);
   }
   // TODO: void-request, void-response

@@ -38,7 +38,7 @@ void TrueTime::sync() {
   }
 }
 
-const double TrueTime::err = 0.01;
+const double TrueTime::err = 0.2;
 
 timespec TrueTime::now() const
 {

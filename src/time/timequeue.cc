@@ -29,8 +29,10 @@ void TimeQueue::push(TimedJob e) {
   Log_Debug("Prepare to pushing");
 
   if (time::TrueTime::GET()->after(e.second)) { // outdated
+    Log_Debug("Outdated");
     (e.first)(true);
   } else {
+    Log_Debug("Push job %f", e.second);
     if (q_.empty()) {
       q_.push(e);
       Log_Debug("Signal Notempty.");
@@ -40,6 +42,7 @@ void TimeQueue::push(TimedJob e) {
       Log_Debug("Signal Newfirst");
       pthread_cond_signal(&newfirst_);
     } else {
+      Log_Debug("Pushback");
       q_.push(e);
     }
   }
@@ -67,6 +70,7 @@ void TimeQueue::pop() {
       Log_Debug("Timeout");
       Job job = timed_job.first;
       job(false);
+      Log_Debug("Pop job: %f", q_.top().second);
       q_.pop();
       break;
     } else if (q_.top().second < oldfirst) { // newfirst preempts

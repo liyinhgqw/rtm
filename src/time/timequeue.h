@@ -23,8 +23,8 @@ public:
   TimeCmp(const bool& revparam=false): reverse(revparam) {}
   bool operator() (const TimedPair& lhs, const TimedPair& rhs) const {
     Log_Assert(lhs.second != rhs.second, "Identical time point !");
-    if (reverse) return (lhs.second > rhs.second);
-    else return (lhs.second < rhs.second);
+    if (reverse) return (lhs.second < rhs.second);
+    else return (lhs.second > rhs.second);
   }
 };
 

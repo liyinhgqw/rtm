@@ -95,7 +95,7 @@ case $startStop in
     cd "$RTM_PREFIX"
     nohup "$RTM_PREFIX"/bin/rtm --config $RTM_CONF_DIR $command "$@" > "$log" 2>&1 < /dev/null &
     echo $! > $pid
-    sleep 1; head "$log"
+    sleep 1; head -200 "$log"
     ;;
           
   (stop)
