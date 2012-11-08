@@ -14,11 +14,7 @@ int main() {
   InitializeNetworking();
   InitializeTrueTime();
   RPC_REG(get, Get);
+  RPC_REG(put, Put);
   PServer server;
   server.serve(Conf::get_rtmserver_port());
-  std::list<std::string> servers_addr = Conf::get_rtmserver_hostport();
-  for (std::list<std::string>::iterator it = servers_addr.begin();
-      it != servers_addr.end(); it++) {
-    std::cout << *it << std::endl;
-  }
 }
