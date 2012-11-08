@@ -50,6 +50,27 @@ public:
   }
 };
 
+class CallbackThreadPool: private boost::noncopyable {
+  std::vector<boost::thread*> threads_;
+
+  typedef boost::function<void()> Job;
+  typedef std::pair<int, int> Callback;
+  typedef std::pair<Job, Callback&> CB_Job;
+  WorkQueue<CB_Job> jobs_;
+
+  void runWorkerThread();
+public:
+  CallbackThreadPool(int size = 80);
+  ~CallbackThreadPool();
+
+  void runAsync(Job f, Callback &cb) {
+    jobs_.push(std::make_pair(f, cb));
+  }
+};
+
+
+
+
 }  // namespace rtm
 
 #endif // UTIL_THREADPOOL_H

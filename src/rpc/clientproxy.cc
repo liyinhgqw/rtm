@@ -2,6 +2,7 @@
 #include "rpc/pclient.h"
 #include "time/truetime.h"
 #include "util/configuration.h"
+#include "util/threadpool.h"
 
 namespace rtm {
 namespace rpc {
@@ -11,6 +12,8 @@ public:
   PClientProxy();
   virtual ~PClientProxy();
   virtual bool call(std::string, Message&, Message&);
+private:
+  ThreadPool threadpool_;
 };
 
 ClientProxy* ClientProxy::create(std::string protocol) {
@@ -41,6 +44,7 @@ PClientProxy::~PClientProxy() {
 // Strawman. TODO: async call, using multi-thread???
 bool PClientProxy::call(std::string method, Message& request, Message& response) {
   bool ret = true;
+/*
   for (std::list<Client*>::iterator it = client_list_.begin();
       it != client_list_.end(); it++) {
     PClient* pclient_ptr = dynamic_cast<PClient*>(*it);
@@ -49,6 +53,19 @@ bool PClientProxy::call(std::string method, Message& request, Message& response)
       break;
     }
   }
+*/
+
+  std::pair<int,int> callback;
+  for (std::list<Client*>::iterator it = client_list_.begin();
+    it != client_list_.end(); it++) {
+    PClient* pclient_ptr = dynamic_cast<PClient*>(*it);
+    threadpool_.callbackAsync(boost::bind(&PClient::call, pclient_ptr, method, request, response), callback);
+  }
+  if (false == pclient_ptr->call(method, request, response)) {
+    ret = false;
+    break;
+  }
+
 
   return ret;
 }
