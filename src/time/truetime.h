@@ -32,6 +32,7 @@ public:
   virtual void read(Decoder *d);
 
   void sync();
+  void init_sync();
 
 
 private:
