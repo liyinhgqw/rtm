@@ -9,6 +9,7 @@ class TimeQueue;
 TimeQueue::TimeQueue() {
   assert(pthread_mutex_init(&qLock_, NULL) == 0);
   assert(pthread_cond_init(&newfirst_, NULL) == 0);
+  assert(pthread_cond_init(&notempty_, NULL) == 0);
   workthread_ = new boost::thread(&TimeQueue::runWorkerThread, this);
 }
 
@@ -30,8 +31,13 @@ void TimeQueue::push(TimedJob e) {
   if (time::TrueTime::GET()->after(e.second)) { // outdated
     (e.first)(true);
   } else {
-    if (q_.empty() || e.second < q_.top().second) {
+    if (q_.empty()) {
       q_.push(e);
+      Log_Debug("Signal Notempty.");
+      pthread_cond_signal(&notempty_);
+    } else if (e.second < q_.top().second) {
+      q_.push(e);
+      Log_Debug("Signal Newfirst");
       pthread_cond_signal(&newfirst_);
     } else {
       q_.push(e);
@@ -45,7 +51,7 @@ void TimeQueue::pop() {
   while (1) {
     Log_Debug("Waiting for the push ...");
     while (q_.size() == 0) {
-      pthread_cond_wait(&newfirst_, &qLock_);
+      pthread_cond_wait(&notempty_, &qLock_);
     }
 
     int rc = 0;
@@ -53,16 +59,18 @@ void TimeQueue::pop() {
     TimedJob timed_job = q_.top();
 
     while (q_.top().second >= oldfirst && rc == 0) {
-      Log_Debug("Waiting for the newfirst or timer ...");
       timespec timer = time::TrueTime::GET()->fire_localtime(timed_job.second);
+      Log_Debug("Waiting for the newfirst or timer ... %f", util::timespecToDouble(timer));
       rc = pthread_cond_timedwait(&newfirst_, &qLock_, &timer);
     }
     if (rc == ETIMEDOUT) { // fire
+      Log_Debug("Timeout");
       Job job = timed_job.first;
       job(false);
       q_.pop();
       break;
     } else if (q_.top().second < oldfirst) { // newfirst preempts
+      Log_Debug("Preempted");
       // continue;
     } else {
       Log_Fatal("Unknown waken up. ");
