@@ -54,7 +54,7 @@ bool PClientProxy::call(std::string method, Message& request, Message& response)
 
     request.SerializeToString(&request_str);
     threadpool_.runAsync(boost::bind(&PClient::raw_call, pclient_ptr, method,
-                                     request_str, response_str), cb_ptr);
+                                     request_str, &response_str), cb_ptr);
   }
   while (!callback_list.empty()) {
     Callback* cb = callback_list.front();
@@ -75,8 +75,10 @@ bool PClientProxy::call(std::string method, Message& request, Message& response)
     callback_list.pop_front();
   }
 
-  if (ret)
+  if (ret) {
+    Log_Debug("RESPONSE = %s", response_str.c_str());
     response.ParseFromString(response_str);
+  }
 
   return ret;
 }

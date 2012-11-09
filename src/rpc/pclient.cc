@@ -15,11 +15,11 @@ bool PClient::call(util::StringPiece method, Message &request, Message &response
   return true;
 }
 
-bool PClient::raw_call(util::StringPiece method, std::string &request_str, std::string &response_str) {
+bool PClient::raw_call(util::StringPiece method, std::string &request_str, std::string* response_str) {
   Future* f = invoke(method, util::StringPiece(request_str));
   if (!f) return false;
   RawFuture *rf = dynamic_cast<RawFuture*>(f);
-  response_str = rf->results();    // wait for the result
+  *response_str = rf->results();    // wait for the result
   delete f;
 
   return true;
