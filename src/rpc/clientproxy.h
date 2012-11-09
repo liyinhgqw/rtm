@@ -20,6 +20,12 @@ protected:
   std::list<Client*> client_list_;
 };
 
+struct Callback {
+  bool ret;
+  bool finished;
+  Callback(): ret(false), finished(false) {}
+};
+
 }  // namespace rpc
 }  // namespace rtm
 

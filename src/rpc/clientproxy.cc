@@ -4,6 +4,8 @@
 #include "util/configuration.h"
 #include "util/threadpool.h"
 
+#include <boost/shared_ptr.hpp>
+
 namespace rtm {
 namespace rpc {
 
@@ -13,7 +15,7 @@ public:
   virtual ~PClientProxy();
   virtual bool call(std::string, Message&, Message&);
 private:
-  ThreadPool threadpool_;
+  CallbackThreadPool threadpool_;
 };
 
 ClientProxy* ClientProxy::create(std::string protocol) {
@@ -44,28 +46,26 @@ PClientProxy::~PClientProxy() {
 // Strawman. TODO: async call, using multi-thread???
 bool PClientProxy::call(std::string method, Message& request, Message& response) {
   bool ret = true;
-/*
-  for (std::list<Client*>::iterator it = client_list_.begin();
-      it != client_list_.end(); it++) {
-    PClient* pclient_ptr = dynamic_cast<PClient*>(*it);
-    if (false == pclient_ptr->call(method, request, response)) {
-      ret = false;
-      break;
-    }
-  }
-*/
-
-  std::pair<int,int> callback;
+  std::list<boost::shared_ptr<Callback*> > callback_list;
   for (std::list<Client*>::iterator it = client_list_.begin();
     it != client_list_.end(); it++) {
+    boost::shared_ptr<Callback*> cb_ptr(new Callback);
+    callback_list.push_back(cb_ptr);
     PClient* pclient_ptr = dynamic_cast<PClient*>(*it);
-    threadpool_.callbackAsync(boost::bind(&PClient::call, pclient_ptr, method, request, response), callback);
+    threadpool_.runAsync(boost::bind(&PClient::call, pclient_ptr, method, request, response), cb_ptr);
   }
-  if (false == pclient_ptr->call(method, request, response)) {
-    ret = false;
-    break;
+  while (!callback_list.empty()) {
+    Callback* cb = callback_list.front();
+    if (cb->finished) {
+      if (!cb->ret) {
+        ret = false;
+        break;
+      }
+      callback_list.pop_front();
+    } else {
+      sleep(0.001);
+    }
   }
-
 
   return ret;
 }

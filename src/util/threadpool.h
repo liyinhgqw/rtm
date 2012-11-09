@@ -1,9 +1,10 @@
 #ifndef UTIL_THREADPOOL_H
 #define UTIL_THREADPOOL_H
 
+#include "rpc/clientproxy.h"
+
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
-
 #include <deque>
 
 namespace rtm {
@@ -53,9 +54,8 @@ public:
 class CallbackThreadPool: private boost::noncopyable {
   std::vector<boost::thread*> threads_;
 
-  typedef boost::function<void()> Job;
-  typedef std::pair<int, int> Callback;
-  typedef std::pair<Job, Callback&> CB_Job;
+  typedef boost::function<bool()> Job;
+  typedef std::pair<Job, rpc::Callback*> CB_Job;
   WorkQueue<CB_Job> jobs_;
 
   void runWorkerThread();
@@ -63,7 +63,7 @@ public:
   CallbackThreadPool(int size = 80);
   ~CallbackThreadPool();
 
-  void runAsync(Job f, Callback &cb) {
+  void runAsync(Job f, rpc::Callback* cb) {
     jobs_.push(std::make_pair(f, cb));
   }
 };

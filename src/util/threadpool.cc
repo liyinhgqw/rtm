@@ -47,14 +47,13 @@ CallbackThreadPool::~CallbackThreadPool() {
 void CallbackThreadPool::runWorkerThread() {
   for (;;) {
     CB_Job cb_j = this->jobs_.pop();
-    if (cb_j == NULL) {
-      break;
-    }
-    bool ret = (cb_j.first)();
+    Job f = cb_j.first;
+    bool ret = f();
     // ugly code I admit
-    Callback& cb = cb_j.second;
-    ++ cb.first;      // total callback
-    if (ret) ++ cb.second;  // ret
+    rpc::Callback* cb = cb_j.second;
+    if (ret)
+      cb->ret = true;  // ret
+    cb->finished = true;      // total callback
   }
 }
 
